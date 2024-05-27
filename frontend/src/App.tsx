@@ -3,6 +3,7 @@ import { ChakraProvider, Box, Heading, VStack, Button, Text, useToast } from '@c
 import apiClient from './apiClient';
 import { Task } from './types/Task';
 import TaskForm from './component/TaskForm';
+import NotificationsComponent from './component/NotificationComponent';
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -37,14 +38,7 @@ const App: React.FC = () => {
         <Heading mb={6}>Task Management</Heading>
         <TaskForm addTask={addTask} />
         <VStack spacing={4} align="stretch" mt={10}>
-          {tasks.map((task) => (
-            <Box key={task.id} p={4} borderWidth={1} borderRadius="lg">
-              <Text fontSize="xl">{task.name}</Text>
-              <Text>{task.description}</Text>
-              <Text>Status: {task.status}</Text>
-              <Text>Duration: {task.taskDurationInSeconds} seconds</Text>
-            </Box>
-          ))}
+          <NotificationsComponent tasks={tasks} setTasks={setTasks}/>
         </VStack>
       </Box>
     </ChakraProvider>

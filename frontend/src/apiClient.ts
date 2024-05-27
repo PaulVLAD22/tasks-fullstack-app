@@ -3,9 +3,6 @@ import { configuration } from './config';
 
 const apiClient = axios.create({
   baseURL: configuration.gateway_url, // URL of the API Gateway
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 export default apiClient;

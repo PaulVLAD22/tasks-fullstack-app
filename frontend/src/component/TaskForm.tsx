@@ -1,60 +1,53 @@
 import React, { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, VStack, useToast } from '@chakra-ui/react';
-import apiClient from '../apiClient';
+import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { Task } from '../types/Task';
-import { createTask } from '../utils/task.util';
+import apiClient from '../apiClient';
 
 interface TaskFormProps {
-    addTask: (task: Task) => void;
-  }
+  addTask: (task: Task) => void;
+}
 
-const TaskForm: React.FC<TaskFormProps> = ({addTask}) => {
-  const [taskName, setTaskName] = useState('');
-  const [taskDuration, setTaskDuration] = useState<number | ''>('');
-  const toast = useToast();
+const TaskForm: React.FC<TaskFormProps> = ({ addTask }) => {
+  const [name, setName] = useState('');
+  const [duration, setDuration] = useState(0);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (taskName && taskDuration) {
-        createTask(taskName, taskDuration, addTask, toast);
-        setTaskName('');
-        setTaskDuration('');
-    } else {
-      toast({
-        title: 'Invalid input',
-        description: 'Please enter both a task name and a duration in seconds.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+
+    const newTask: Task = {
+      name,
+      taskDurationInSeconds: duration,
+    }
+
+    try {
+      // Assuming you have an API endpoint to create a task
+      const response = await apiClient.post<Task>('/tasks', newTask);
+      addTask(response.data);
+      setName('');
+      setDuration(0);
+    } catch (error) {
+      console.error('Failed to create task:', error);
     }
   };
 
   return (
-    <Box p={5} borderWidth={1} borderRadius="lg">
-      <form onSubmit={handleSubmit}>
-        <VStack spacing={4}>
-          <FormControl id="task-name" isRequired>
-            <FormLabel>Task Name</FormLabel>
-            <Input
-              type="text"
-              value={taskName}
-              onChange={(e) => setTaskName(e.target.value)}
-            />
-          </FormControl>
-          <FormControl id="task-duration" isRequired>
-            <FormLabel>Task Duration (seconds)</FormLabel>
-            <Input
-              type="number"
-              value={taskDuration}
-              onChange={(e) => setTaskDuration(parseInt(e.target.value, 10) || '')}
-            />
-          </FormControl>
-          <Button type="submit" colorScheme="teal">
-            Submit
-          </Button>
-        </VStack>
-      </form>
+    <Box as="form" onSubmit={handleSubmit}>
+      <FormControl mb={4}>
+        <FormLabel>Task Name</FormLabel>
+        <Input value={name} onChange={(e) => setName(e.target.value)} required />
+      </FormControl>
+      <FormControl mb={4}>
+        <FormLabel>Task Duration (seconds)</FormLabel>
+        <Input
+          type="number"
+          value={duration}
+          onChange={(e) => setDuration(Number(e.target.value))}
+          required
+        />
+      </FormControl>
+      <Button type="submit" colorScheme="blue">
+        Add Task
+      </Button>
     </Box>
   );
 };

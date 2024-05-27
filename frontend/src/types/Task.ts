@@ -1,8 +1,7 @@
 export interface Task {
-    id: number;
+    id?: number;
     name: string;
-    description: string;
-    status: string;
+    status?: string;
     taskDurationInSeconds: number;
   }
   

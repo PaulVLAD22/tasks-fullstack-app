@@ -1,12 +1,16 @@
 package com.example.taskservice.model;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
+@Data
 @Table(name = "tasks")
-public class Task {
+public class Task implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,14 +18,11 @@ public class Task {
 
     @Column(nullable = false)
     private String name;
-
-    @Column
-    private String description;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status;
 
+    @JsonIgnore
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
@@ -33,9 +34,8 @@ public class Task {
     }
 
     // Constructor with parameters
-    public Task(String name, String description, TaskStatus status, LocalDateTime createdDate, int taskDurationInSeconds) {
+    public Task(String name, TaskStatus status, LocalDateTime createdDate, int taskDurationInSeconds) {
         this.name = name;
-        this.description = description;
         this.status = status;
         this.createdDate = createdDate;
         this.taskDurationInSeconds = taskDurationInSeconds;
@@ -57,14 +57,6 @@ public class Task {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public TaskStatus getStatus() {
